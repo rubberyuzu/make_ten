@@ -1,24 +1,18 @@
-# returns true or false
+# returns true or false, refactored.
 class MakeTenCalculator
 
 	def initialize(a, b, c, d, result)
 		@helpers = []
 		sorted_four_els = [a, b, c, d].sort
-		p calc_with_four_values(sorted_four_els, result)
+		p with_four_values(sorted_four_els, result)
 	end
 
 	# make sure to pass variables in order of size
-	def calc_with_two_values(two_els, result)
+	def with_two_values(two_els, result)
 		p "two els #{two_els} #{result}"
-		a = two_els[0]
-		b = two_els[1]
-		if a+b == result
-			return true
-		elsif a-b == result
-			return true
-		elsif a*b == result
-			return true
-		elsif (a%b == 0 && a/b ==result)
+		a, b = two_els[0], two_els[1]
+		if a+b == result || a-b == result ||
+		   a*b == result || (a%b == 0 && a/b ==result)
 			return true
 		else
 			return false
@@ -26,15 +20,13 @@ class MakeTenCalculator
 	end
 
 	# ditto
-	def calc_with_three_values(three_els, result)
-		a = three_els[0]
-		b = three_els[1]
-		c = three_els[2]
+	def with_three_values(three_els, result)
+		a, b, c = three_els[0], three_els[1], three_els[2]
 		p "three els #{three_els} #{result}"
 		three_els.each_with_index do |el, i|
-			result_arr = get_possible_helper(el, result)
+			result_arr = get_possible_helpers(el, result)
 			result_arr.each do |res|
-				if calc_with_two_values(extract_one_from_arr(i, three_els), res)
+				if with_two_values(extract_indexed(i, three_els), res)
 					return true
 					exit
 				end
@@ -43,7 +35,7 @@ class MakeTenCalculator
 		return false
 	end
 
-	def get_possible_helper(a, result)
+	def get_possible_helpers(a, result)
 		if result%a == 0
 			return [result+a, (result-a).abs, result*a, result/a].uniq
 		else
@@ -51,7 +43,7 @@ class MakeTenCalculator
 		end
 	end
 
-	def extract_one_from_arr(i, arr)
+	def extract_indexed(i, arr)
 		extracted_arr = []
 		arr.each_with_index do |x, index|
 			unless index == i
@@ -62,14 +54,15 @@ class MakeTenCalculator
 	end
 
 	# ditto
-	def calc_with_four_values(four_els, result)
+	def with_four_values(four_els, result)
 		unique_four_els = four_els.uniq
+		p "unique #{unique_four_els}"
 		unique_four_els.each_with_index do |x, i|
-			@helper = get_possible_helper(x, result)
+			@helper = get_possible_helpers(x, result)
 			p "helper #{@helper}"
 			@helper.each do |helper|
-				if calc_with_three_values(extract_one_from_arr(i, four_els),
-																	helper)
+				if with_three_values(extract_indexed(i, four_els),
+														 helper)
 					return true
 					exit
 				end
