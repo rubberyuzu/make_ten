@@ -36,11 +36,14 @@ class MakeTenCalculator
 	end
 
 	def get_possible_helpers(a, result)
+		helpers = [result+a, (result-a).abs, result*a].uniq
 		if result%a == 0
-			return [result+a, (result-a).abs, result*a, result/a].uniq
-		else
-			return [result+a, (result-a).abs, result*a].uniq
+			helpers << result/a
 		end
+		if a%result == 0
+			helpers << a/result
+		end
+		return helpers
 	end
 
 	def extract_indexed(i, arr)
@@ -57,6 +60,7 @@ class MakeTenCalculator
 	def with_four_values(four_els, result)
 		unique_four_els = four_els.uniq
 		p "unique #{unique_four_els}"
+
 		unique_four_els.each_with_index do |x, i|
 			@helper = get_possible_helpers(x, result)
 			p "helper #{@helper}"
